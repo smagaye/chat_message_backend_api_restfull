@@ -2,6 +2,7 @@ package com.smag.chatmessage.modele;
 
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -14,6 +15,8 @@ public class User {
     private String email;
     private String password;
     private String profile;
+    private Collection<Discussion> discussionsByIdUser;
+    private Collection<Contact> contactsByIdUser;
 
     @Id
     @Column(name = "id_user")
@@ -100,7 +103,42 @@ public class User {
     }
 
     @Override
+    public String toString() {
+        return super.toString() +name+phone;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(idUser, surname, name, phone, email, password, profile);
+    }
+
+    public void formatToUpdate(User userPost){
+        if(userPost!=null){
+
+            if(userPost.getEmail()!=null) this.setEmail(userPost.getEmail());
+            if(userPost.getIdUser()!=null) this.setIdUser(userPost.getIdUser());
+            if(userPost.getName()!=null) this.setName(userPost.getName());
+            if(userPost.getPhone()!=null) this.setPhone(userPost.getEmail());
+            if(userPost.getPassword()!=null) this.setPassword(userPost.getPassword());
+            if(userPost.getProfile()!=null) this.setProfile(userPost.getProfile());
+        }
+    }
+
+    @OneToMany(mappedBy = "userByInterlocuteur")
+    public Collection<Discussion> getDiscussionsByIdUser() {
+        return discussionsByIdUser;
+    }
+
+    public void setDiscussionsByIdUser(Collection<Discussion> discussionsByIdUser) {
+        this.discussionsByIdUser = discussionsByIdUser;
+    }
+
+    @OneToMany(mappedBy = "userByProprietaire")
+    public Collection<Contact> getContactsByIdUser() {
+        return contactsByIdUser;
+    }
+
+    public void setContactsByIdUser(Collection<Contact> contactsByIdUser) {
+        this.contactsByIdUser = contactsByIdUser;
     }
 }

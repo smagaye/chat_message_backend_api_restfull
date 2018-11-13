@@ -13,6 +13,7 @@ public class Message {
     private Timestamp received;
     private Byte read;
     private String status;
+    private Discussion discussionByIdDiscussion;
 
     @Id
     @Column(name = "id_message")
@@ -90,5 +91,15 @@ public class Message {
     @Override
     public int hashCode() {
         return Objects.hash(idMessage, content, sent, received, read, status);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "id_discussion", referencedColumnName = "id_discussion", nullable = false)
+    public Discussion getDiscussionByIdDiscussion() {
+        return discussionByIdDiscussion;
+    }
+
+    public void setDiscussionByIdDiscussion(Discussion discussionByIdDiscussion) {
+        this.discussionByIdDiscussion = discussionByIdDiscussion;
     }
 }

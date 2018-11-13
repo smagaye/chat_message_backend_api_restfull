@@ -2,6 +2,7 @@ package com.smag.chatmessage.modele;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -9,6 +10,8 @@ import java.util.Objects;
 public class Discussion {
     private String idDiscussion;
     private Timestamp lastUpdate;
+    private User userByInterlocuteur;
+    private Collection<Message> messagesByIdDiscussion;
 
     @Id
     @Column(name = "id_discussion")
@@ -42,5 +45,24 @@ public class Discussion {
     @Override
     public int hashCode() {
         return Objects.hash(idDiscussion, lastUpdate);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "Interlocuteur", referencedColumnName = "id_user", nullable = false)
+    public User getUserByInterlocuteur() {
+        return userByInterlocuteur;
+    }
+
+    public void setUserByInterlocuteur(User userByInterlocuteur) {
+        this.userByInterlocuteur = userByInterlocuteur;
+    }
+
+    @OneToMany(mappedBy = "discussionByIdDiscussion")
+    public Collection<Message> getMessagesByIdDiscussion() {
+        return messagesByIdDiscussion;
+    }
+
+    public void setMessagesByIdDiscussion(Collection<Message> messagesByIdDiscussion) {
+        this.messagesByIdDiscussion = messagesByIdDiscussion;
     }
 }

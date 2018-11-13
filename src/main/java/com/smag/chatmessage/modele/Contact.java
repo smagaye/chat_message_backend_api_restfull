@@ -11,6 +11,7 @@ import java.util.Objects;
 public class Contact {
     private int idContact;
     private String listContact;
+    private User userByProprietaire;
 
     /*
      * Getter for attribut idContact
@@ -35,7 +36,6 @@ public class Contact {
     public String getListContact() {
         return listContact;
     }
-
 
     /*
      * Setter for attribut listContact
@@ -62,5 +62,15 @@ public class Contact {
     @Override
     public int hashCode() {
         return Objects.hash(idContact, listContact);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "proprietaire", referencedColumnName = "id_user", nullable = false)
+    public User getUserByProprietaire() {
+        return userByProprietaire;
+    }
+
+    public void setUserByProprietaire(User userByProprietaire) {
+        this.userByProprietaire = userByProprietaire;
     }
 }

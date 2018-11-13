@@ -12,7 +12,7 @@ public class UserService {
     UserRepository userRepository;
 
     public void save(User user) {
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
     }
 
     public Iterable<User> getAllUsers(){
@@ -31,7 +31,18 @@ public class UserService {
         return userRepository.findByPhone(id);
     }
 
+    public User findByEmailOrPhone(String email,String phone){return userRepository.findByEmailOrPhone(email,phone);}
+
     public void deleteAllUsers(){
         userRepository.deleteAll();
+    }
+
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
+
+
+    public void deleteById(String id) {
+        userRepository.deleteByIdUser(id);
     }
 }
