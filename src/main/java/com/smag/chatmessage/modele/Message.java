@@ -14,6 +14,7 @@ public class Message {
     private Byte read;
     private String status;
     private Discussion discussionByIdDiscussion;
+    private String media;
 
     public void setIdMessage(Integer idMessage) {
         this.idMessage = idMessage;
@@ -105,5 +106,15 @@ public class Message {
 
     public void setDiscussionByIdDiscussion(Discussion discussionByIdDiscussion) {
         this.discussionByIdDiscussion = discussionByIdDiscussion;
+    }
+
+    @Basic
+    @Column(name = "media")
+    public String getMedia() {
+        return media;
+    }
+
+    public void setMedia(String media) {
+        this.media = media;
     }
 }

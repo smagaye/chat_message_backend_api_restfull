@@ -5,6 +5,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
@@ -16,6 +17,7 @@ public class User {
     private String email;
     private String password;
     private String profile;
+    private Timestamp dateSignIn;
 
     @Id
     @Column(name = "id_user", nullable = false, length = 45)
@@ -106,6 +108,7 @@ public class User {
     public int hashCode() {
         return Objects.hash(idUser, surname, name, phone, email, password, profile);
     }
+
     public void formatToUpdate(User userPost){
         if(userPost!=null){
 
@@ -116,5 +119,15 @@ public class User {
             if(userPost.getPassword()!=null) this.setPassword(userPost.getPassword());
             if(userPost.getProfile()!=null) this.setProfile(userPost.getProfile());
         }
+    }
+
+    @Basic
+    @Column(name = "date_sign_in")
+    public Timestamp getDateSignIn() {
+        return dateSignIn;
+    }
+
+    public void setDateSignIn(Timestamp dateSignIn) {
+        this.dateSignIn = dateSignIn;
     }
 }
