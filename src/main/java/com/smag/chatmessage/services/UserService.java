@@ -4,18 +4,22 @@ import com.smag.chatmessage.modele.User;
 import com.smag.chatmessage.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Set;
 
 
 @Service
 public class UserService {
     @Autowired
     UserRepository userRepository;
-
+    @Transactional
     public void save(User user) {
         userRepository.saveAndFlush(user);
     }
 
-    public Iterable<User> getAllUsers(){
+    public List<User> getAllUsers(){
         return  userRepository.findAll();
     }
 
@@ -31,17 +35,27 @@ public class UserService {
         return userRepository.findByPhone(id);
     }
 
+    public List<User> findBySurname(String surname){ return userRepository.findBySurname(surname);}
+
+    public List<User> findByName(String name){return userRepository.findByName(name);}
+
+    public User findByProfile(String profile){return userRepository.findByProfile(profile);}
+
+    public List<User> findAllContactById(Set listPhonebook){return userRepository.findByIdUserIn(listPhonebook);}
+
     public User findByEmailOrPhone(String email,String phone){return userRepository.findByEmailOrPhone(email,phone);}
 
+    @Transactional
     public void deleteAllUsers(){
         userRepository.deleteAll();
     }
 
+    @Transactional
     public void delete(User user) {
         userRepository.delete(user);
     }
 
-
+    @Transactional
     public void deleteById(String id) {
         userRepository.deleteByIdUser(id);
     }

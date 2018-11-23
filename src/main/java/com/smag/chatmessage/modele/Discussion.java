@@ -2,19 +2,16 @@ package com.smag.chatmessage.modele;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-@Table(name = "Discussion", schema = "chatMessage", catalog = "")
 public class Discussion {
     private String idDiscussion;
     private Timestamp lastUpdate;
     private User userByInterlocuteur;
-    private Collection<Message> messagesByIdDiscussion;
 
     @Id
-    @Column(name = "id_discussion")
+    @Column(name = "id_discussion", nullable = false, length = 45)
     public String getIdDiscussion() {
         return idDiscussion;
     }
@@ -24,7 +21,7 @@ public class Discussion {
     }
 
     @Basic
-    @Column(name = "last_update")
+    @Column(name = "last_update", nullable = true)
     public Timestamp getLastUpdate() {
         return lastUpdate;
     }
@@ -48,21 +45,12 @@ public class Discussion {
     }
 
     @ManyToOne
-    @JoinColumn(name = "Interlocuteur", referencedColumnName = "id_user", nullable = false)
+    @JoinColumn(name = "interlocuteur", referencedColumnName = "id_user", nullable = false)
     public User getUserByInterlocuteur() {
         return userByInterlocuteur;
     }
 
     public void setUserByInterlocuteur(User userByInterlocuteur) {
         this.userByInterlocuteur = userByInterlocuteur;
-    }
-
-    @OneToMany(mappedBy = "discussionByIdDiscussion")
-    public Collection<Message> getMessagesByIdDiscussion() {
-        return messagesByIdDiscussion;
-    }
-
-    public void setMessagesByIdDiscussion(Collection<Message> messagesByIdDiscussion) {
-        this.messagesByIdDiscussion = messagesByIdDiscussion;
     }
 }

@@ -1,12 +1,13 @@
 package com.smag.chatmessage.modele;
 
-
-import javax.persistence.*;
-import java.util.Collection;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
-@Table(name = "User", schema = "chatMessage", catalog = "")
 public class User {
     private String idUser;
     private String surname;
@@ -15,11 +16,10 @@ public class User {
     private String email;
     private String password;
     private String profile;
-    private Collection<Discussion> discussionsByIdUser;
-    private Collection<Contact> contactsByIdUser;
 
     @Id
-    @Column(name = "id_user")
+    @Column(name = "id_user", nullable = false, length = 45)
+    @NotNull
     public String getIdUser() {
         return idUser;
     }
@@ -29,7 +29,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "surname")
+    @Column(name = "surname", nullable = false, length = 100)
     public String getSurname() {
         return surname;
     }
@@ -39,7 +39,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "name")
+    @Column(name = "name", nullable = true, length = 45)
     public String getName() {
         return name;
     }
@@ -49,7 +49,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "phone")
+    @Column(name = "phone", nullable = true, length = 45)
     public String getPhone() {
         return phone;
     }
@@ -59,7 +59,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "email")
+    @Column(name = "email", nullable = true, length = 45)
     public String getEmail() {
         return email;
     }
@@ -69,7 +69,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "password")
+    @Column(name = "password", nullable = true, length = 45)
     public String getPassword() {
         return password;
     }
@@ -79,7 +79,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "profile")
+    @Column(name = "profile", nullable = true, length = 200)
     public String getProfile() {
         return profile;
     }
@@ -92,26 +92,20 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User that = (User) o;
-        return Objects.equals(idUser, that.idUser) &&
-                Objects.equals(surname, that.surname) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(phone, that.phone) &&
-                Objects.equals(email, that.email) &&
-                Objects.equals(password, that.password) &&
-                Objects.equals(profile, that.profile);
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() +name+phone;
+        User user = (User) o;
+        return Objects.equals(idUser, user.idUser) &&
+                Objects.equals(surname, user.surname) &&
+                Objects.equals(name, user.name) &&
+                Objects.equals(phone, user.phone) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(profile, user.profile);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(idUser, surname, name, phone, email, password, profile);
     }
-
     public void formatToUpdate(User userPost){
         if(userPost!=null){
 
@@ -122,23 +116,5 @@ public class User {
             if(userPost.getPassword()!=null) this.setPassword(userPost.getPassword());
             if(userPost.getProfile()!=null) this.setProfile(userPost.getProfile());
         }
-    }
-
-    @OneToMany(mappedBy = "userByInterlocuteur")
-    public Collection<Discussion> getDiscussionsByIdUser() {
-        return discussionsByIdUser;
-    }
-
-    public void setDiscussionsByIdUser(Collection<Discussion> discussionsByIdUser) {
-        this.discussionsByIdUser = discussionsByIdUser;
-    }
-
-    @OneToMany(mappedBy = "userByProprietaire")
-    public Collection<Contact> getContactsByIdUser() {
-        return contactsByIdUser;
-    }
-
-    public void setContactsByIdUser(Collection<Contact> contactsByIdUser) {
-        this.contactsByIdUser = contactsByIdUser;
     }
 }

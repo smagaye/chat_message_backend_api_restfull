@@ -15,8 +15,12 @@ public class Message {
     private String status;
     private Discussion discussionByIdDiscussion;
 
+    public void setIdMessage(Integer idMessage) {
+        this.idMessage = idMessage;
+    }
+
     @Id
-    @Column(name = "id_message")
+    @Column(name = "id_message", nullable = false)
     public int getIdMessage() {
         return idMessage;
     }
@@ -26,7 +30,7 @@ public class Message {
     }
 
     @Basic
-    @Column(name = "content")
+    @Column(name = "content", nullable = false, length = -1)
     public String getContent() {
         return content;
     }
@@ -36,7 +40,7 @@ public class Message {
     }
 
     @Basic
-    @Column(name = "sent")
+    @Column(name = "sent", nullable = true)
     public Timestamp getSent() {
         return sent;
     }
@@ -46,7 +50,7 @@ public class Message {
     }
 
     @Basic
-    @Column(name = "received")
+    @Column(name = "received", nullable = true)
     public Timestamp getReceived() {
         return received;
     }
@@ -56,7 +60,7 @@ public class Message {
     }
 
     @Basic
-    @Column(name = "read")
+    @Column(name = "read", nullable = true)
     public Byte getRead() {
         return read;
     }
@@ -66,7 +70,7 @@ public class Message {
     }
 
     @Basic
-    @Column(name = "status")
+    @Column(name = "status", nullable = true, length = 45)
     public String getStatus() {
         return status;
     }

@@ -4,97 +4,124 @@ import com.smag.chatmessage.modele.User;
 import com.smag.chatmessage.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @RepositoryRestController
 @RestController
-@ResponseBody
 public class APIadmin {
     @Autowired
     UserService userService;
+    @RequestMapping(method = RequestMethod.GET)
+    private ResponseEntity<?> create(@Valid @RequestBody List<User> users) {
+        List<User> errorUser =new ArrayList<>();
+        if(users!=null)
+            for(User user : users){
+                try{
+                    User userFound = userService.findByEmailOrPhone(user.getEmail(),user.getPhone());
+                    if(userFound==null){
+                        userService.save(user);
+                    }else{
+                        errorUser.add(user);
+                    }
+                }catch (Exception e){
+                    errorUser.add(user);
+                }
+            }
+        if(errorUser.isEmpty()) return new ResponseEntity<>(errorUser, HttpStatus.OK);
 
-    @RequestMapping("/users")
-    Iterable<User> Users (){
-        return userService.getAllUsers();
+        else return new ResponseEntity(errorUser,HttpStatus.CONFLICT);
     }
 
-    @RequestMapping(value="/users/{id}", method = RequestMethod.GET)
-    User getUserById(@PathVariable("id")  String id){
+    @RequestMapping(path="/addUser")
+    private ResponseEntity<?> addUser(@RequestBody User user) {
+        User userFound = userService.findByEmailOrPhone(user.getEmail(),user.getPhone());
+        if(userFound==null){
+            userService.save(user);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(user, HttpStatus.CONFLICT);
+        }
+
+    }
+
+    @GetMapping(value="/users")
+    private @ResponseBody ResponseEntity<Object> findUserByParameters (
+            @RequestParam(required=false) String surname,
+            @RequestParam(required=false) String name,
+            @RequestParam(required=false) String email,
+            @RequestParam(required=false) String phone,
+            @RequestParam(required=false) String profile){
+
+        if(email!=null){
+            User user =userService.findByEmail(email);
+            if (user != null) {
+                return  new ResponseEntity(user, HttpStatus.OK);
+            }
+                return new ResponseEntity(user, HttpStatus.NOT_FOUND);
+        }else if(name!=null){
+            List<User> users =userService.findByName(name);
+            if (users != null) {
+                return  new ResponseEntity(users, HttpStatus.OK);
+            }
+                return new ResponseEntity(users, HttpStatus.NOT_FOUND);
+
+        }else if(surname!=null){
+            List<User> users =userService.findBySurname(surname);
+            if ((users != null)) {
+                return  new ResponseEntity(users, HttpStatus.OK);
+            }
+                return new ResponseEntity(users, HttpStatus.NOT_FOUND);
+        }else if(phone!=null){
+           User user =userService.findByPhone(phone);
+            if (user != null) {
+                return  new ResponseEntity(user, HttpStatus.OK);
+            }
+                return new ResponseEntity(user, HttpStatus.NOT_FOUND);
+
+        }else if(profile!=null){
+           User user =userService.findByProfile(profile);
+            if (user != null) {
+                return  new ResponseEntity(user, HttpStatus.OK);
+            }
+                return new ResponseEntity(user, HttpStatus.NOT_FOUND);
+        }
+            return new ResponseEntity(userService.getAllUsers(),HttpStatus.OK);
+    }
+
+    @GetMapping(value="/users/{id}")
+    private User getUserById(@PathVariable("id")  String id){
         return userService.findByIdUser(id);
     }
 
-    @RequestMapping(value="/users/emails/{email}", method = RequestMethod.GET)
-    User getUserByEmail(@PathVariable("email")  String email){
-        return userService.findByEmail(email);
+    @PutMapping(value="/updateUser")
+    private ResponseEntity<User> updateUser (@RequestBody User user) {
+        User userFound = userService.findByEmailOrPhone(user.getEmail(),user.getPhone());
+
+        if(userFound!=null){
+            userFound.formatToUpdate(user);
+            userService.save(user);
+            return new ResponseEntity<>(user,HttpStatus.ACCEPTED);
+        }else{
+            return new ResponseEntity<>(user,HttpStatus.NOT_MODIFIED);
+        }
     }
 
-    @RequestMapping(value="/users/phones/{phone}", method = RequestMethod.GET)
-    User getUserByPhone(@PathVariable("phone")  String phone){
-        return userService.findByPhone(phone);
-    }
-
-    @RequestMapping(value="/users", method = RequestMethod.DELETE)
-    void deleteAllUsers(){
+    @DeleteMapping(value="/users")
+    private void deleteAllUsers(){
         userService.deleteAllUsers();
     }
 
-    @RequestMapping(value="/users/{id}", method = RequestMethod.DELETE)
-    public @ResponseBody String deleteUserById(@PathVariable("id")  String id){
+    @DeleteMapping(value="/users/{id}")
+    private String deleteUserById(@PathVariable("id")  String id){
          if(userService.findByIdUser(id)!=null)userService.deleteById(id);
         return "Deleted";
-    }
-
-    @RequestMapping(value="/addUser", method = RequestMethod.POST)
-    public @ResponseBody String addNewUser (@RequestParam(required=false) String id,
-                                            @RequestParam String surname,
-                                            @RequestParam(required=false) String name,
-                                            @RequestParam(required=false)  String email,
-                                            @RequestParam String phone,
-                                            @RequestParam String password,
-                                            @RequestParam(required=false) String profile) {
-        User user;
-        User userFound = userService.findByEmailOrPhone(email,phone);
-
-        if(userFound==null){
-            user = new User();
-            user.setIdUser(id.trim());
-            user.setSurname(surname.trim());
-            user.setName(name.trim());
-            user.setEmail(email.trim());
-            user.setPhone(phone.trim());
-            user.setPassword(password.trim());
-            user.setProfile(profile.trim());
-            userService.save(user);
-            return "{status: \"User added\"}";
-        }else{
-            return "{status: \"User already exists\"}";
-        }
-    }
-
-    @RequestMapping(value="/updateUser", method = RequestMethod.PUT)
-    public @ResponseBody String updateUser (
-                                            @RequestParam(required=false) String surname,
-                                            @RequestParam(required=false) String name,
-                                            @RequestParam(required=false) String email,
-                                            @RequestParam(required=false) String phone,
-                                            @RequestParam(required=false) String password,
-                                            @RequestParam(required=false) String profile) {
-        User userFound = userService.findByEmailOrPhone(email,phone);
-
-        if(userFound!=null){
-            User user = new User();
-            user.setSurname(surname.trim());
-            user.setName(name.trim());
-            user.setEmail(email.trim());
-            user.setPhone(phone.trim());
-            user.setPassword(password.trim());
-            user.setProfile(profile.trim());
-            userFound.formatToUpdate(user);
-            userService.save(user);
-            return "{status: \"Updated\"}";
-        }else{
-            return "{status: \"User doesn't\"}";
-        }
     }
 
 }
