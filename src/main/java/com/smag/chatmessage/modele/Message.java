@@ -5,33 +5,28 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "message", schema = "chatMessage", catalog = "")
 public class Message {
-    private int idMessage;
+    private Integer idMessage;
     private String content;
+    private String media;
     private Timestamp sent;
     private Timestamp received;
     private Byte read;
     private String status;
     private Discussion discussionByIdDiscussion;
-    private String media;
+
+    @Id
+    @Column(name = "id_message")
+    public Integer getIdMessage() {
+        return idMessage;
+    }
 
     public void setIdMessage(Integer idMessage) {
         this.idMessage = idMessage;
     }
 
-    @Id
-    @Column(name = "id_message", nullable = false)
-    public int getIdMessage() {
-        return idMessage;
-    }
-
-    public void setIdMessage(int idMessage) {
-        this.idMessage = idMessage;
-    }
-
     @Basic
-    @Column(name = "content", nullable = false, length = -1)
+    @Column(name = "content")
     public String getContent() {
         return content;
     }
@@ -41,7 +36,17 @@ public class Message {
     }
 
     @Basic
-    @Column(name = "sent", nullable = true)
+    @Column(name = "media")
+    public String getMedia() {
+        return media;
+    }
+
+    public void setMedia(String media) {
+        this.media = media;
+    }
+
+    @Basic
+    @Column(name = "sent")
     public Timestamp getSent() {
         return sent;
     }
@@ -51,7 +56,7 @@ public class Message {
     }
 
     @Basic
-    @Column(name = "received", nullable = true)
+    @Column(name = "received")
     public Timestamp getReceived() {
         return received;
     }
@@ -61,7 +66,7 @@ public class Message {
     }
 
     @Basic
-    @Column(name = "read", nullable = true)
+    @Column(name = "read")
     public Byte getRead() {
         return read;
     }
@@ -71,7 +76,7 @@ public class Message {
     }
 
     @Basic
-    @Column(name = "status", nullable = true, length = 45)
+    @Column(name = "status")
     public String getStatus() {
         return status;
     }
@@ -84,18 +89,19 @@ public class Message {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Message that = (Message) o;
-        return idMessage == that.idMessage &&
-                Objects.equals(content, that.content) &&
-                Objects.equals(sent, that.sent) &&
-                Objects.equals(received, that.received) &&
-                Objects.equals(read, that.read) &&
-                Objects.equals(status, that.status);
+        Message message = (Message) o;
+        return Objects.equals(idMessage, message.idMessage) &&
+                Objects.equals(content, message.content) &&
+                Objects.equals(media, message.media) &&
+                Objects.equals(sent, message.sent) &&
+                Objects.equals(received, message.received) &&
+                Objects.equals(read, message.read) &&
+                Objects.equals(status, message.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idMessage, content, sent, received, read, status);
+        return Objects.hash(idMessage, content, media, sent, received, read, status);
     }
 
     @ManyToOne
@@ -106,15 +112,5 @@ public class Message {
 
     public void setDiscussionByIdDiscussion(Discussion discussionByIdDiscussion) {
         this.discussionByIdDiscussion = discussionByIdDiscussion;
-    }
-
-    @Basic
-    @Column(name = "media")
-    public String getMedia() {
-        return media;
-    }
-
-    public void setMedia(String media) {
-        this.media = media;
     }
 }

@@ -1,5 +1,6 @@
 package com.smag.chatmessage.services;
 
+import com.smag.chatmessage.helper.GenerateCode;
 import com.smag.chatmessage.modele.Phonebook;
 import com.smag.chatmessage.modele.User;
 import com.smag.chatmessage.repositories.PhonebookRepository;
@@ -13,9 +14,32 @@ import java.util.List;
 public class PhonebookService {
     @Autowired private PhonebookRepository phonebookRepository;
     @Autowired private UserService userService;
+    @Autowired private PhonebookService phonebookService;
 
     public void save(Phonebook phonebook){
         phonebookRepository.save(phonebook);
+    }
+
+    public void save(String idProprietaire, User contact){
+        User proprietaire = userService.findByIdUser(idProprietaire);
+        User userFound =null;
+        if(proprietaire!=null) {
+            userFound = userService.findByEmailOrPhone(contact.getEmail(), contact.getPhone());
+            if(userFound==null) {
+                userService.save(contact);
+            }
+                Phonebook newPhonebook  = phonebookService.getPhonebookByIdUser(idProprietaire);
+                try{
+                    if(!newPhonebook.getListPhonebook().contains(contact.getIdUser()))
+                     newPhonebook.setListPhonebook(newPhonebook.getListPhonebook() + "__"+ contact.getIdUser());
+                }catch (NullPointerException ex){
+                    newPhonebook = new Phonebook();
+                    newPhonebook.setIdPhonebook(GenerateCode.getRandomInteger());
+                    newPhonebook.setUserByProprietaire(proprietaire);
+                    newPhonebook.setListPhonebook(contact.getIdUser());
+                }
+                save(newPhonebook);
+        }
     }
 
     public Phonebook findById(String id){

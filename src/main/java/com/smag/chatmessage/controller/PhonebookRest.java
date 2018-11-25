@@ -16,6 +16,18 @@ public class PhonebookRest {
     @Autowired private UserService userService;
     @Autowired private PhonebookService phonebookService;
 
+    @GetMapping(value="/users/{id}/addContact")
+    private ResponseEntity<?> addUser(@PathVariable("id") String id, @RequestBody User user) {
+        try{
+            phonebookService.save(id,user);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+    }
+
     @GetMapping(value="/users/{id}/contacts")
     private ResponseEntity<?> getPhonebook(@PathVariable("id")  String id){
         List<User> contacts = phonebookService.getContacts(id);
@@ -39,6 +51,7 @@ public class PhonebookRest {
             return new ResponseEntity<>(emails,HttpStatus.OK);
         }return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
+
     @GetMapping(value="/users/{id}/contacts/surnames")
     private ResponseEntity<?> getSurnames(@PathVariable("id")  String id){
         List<String> phonebook = phonebookService.getOnlySurnames(id);

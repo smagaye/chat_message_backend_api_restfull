@@ -11,15 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @RepositoryRestController
 @RestController
 public class APIadmin {
     @Autowired
     UserService userService;
-    @RequestMapping(method = RequestMethod.GET)
-    private ResponseEntity<?> create(@Valid @RequestBody List<User> users) {
+    @PostMapping(value="/addUsers")
+    private ResponseEntity<?> addUsers(@Valid @RequestBody List<User> users) {
         List<User> errorUser =new ArrayList<>();
         if(users!=null)
             for(User user : users){
@@ -39,7 +38,7 @@ public class APIadmin {
         else return new ResponseEntity(errorUser,HttpStatus.CONFLICT);
     }
 
-    @RequestMapping(path="/addUser")
+    @PostMapping(path="/addUser")
     private ResponseEntity<?> addUser(@RequestBody User user) {
         User userFound = userService.findByEmailOrPhone(user.getEmail(),user.getPhone());
         if(userFound==null){

@@ -1,11 +1,8 @@
 package com.smag.chatmessage.modele;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -18,10 +15,12 @@ public class User {
     private String password;
     private String profile;
     private Timestamp dateSignIn;
+    private Collection<Discussion> discussionsByIdUser;
+    private Collection<Discussion> discussionsByIdUser_0;
+    private Collection<Phonebook> phonebooksByIdUser;
 
     @Id
-    @Column(name = "id_user", nullable = false, length = 45)
-    @NotNull
+    @Column(name = "id_user")
     public String getIdUser() {
         return idUser;
     }
@@ -31,7 +30,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "surname", nullable = false, length = 100)
+    @Column(name = "surname")
     public String getSurname() {
         return surname;
     }
@@ -41,7 +40,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 45)
+    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -51,7 +50,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "phone", nullable = true, length = 45)
+    @Column(name = "phone")
     public String getPhone() {
         return phone;
     }
@@ -61,7 +60,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "email", nullable = true, length = 45)
+    @Column(name = "email")
     public String getEmail() {
         return email;
     }
@@ -71,7 +70,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "password", nullable = true, length = 45)
+    @Column(name = "password")
     public String getPassword() {
         return password;
     }
@@ -81,13 +80,23 @@ public class User {
     }
 
     @Basic
-    @Column(name = "profile", nullable = true, length = 200)
+    @Column(name = "profile")
     public String getProfile() {
         return profile;
     }
 
     public void setProfile(String profile) {
         this.profile = profile;
+    }
+
+    @Basic
+    @Column(name = "date_sign_in")
+    public Timestamp getDateSignIn() {
+        return dateSignIn;
+    }
+
+    public void setDateSignIn(Timestamp dateSignIn) {
+        this.dateSignIn = dateSignIn;
     }
 
     @Override
@@ -101,17 +110,44 @@ public class User {
                 Objects.equals(phone, user.phone) &&
                 Objects.equals(email, user.email) &&
                 Objects.equals(password, user.password) &&
-                Objects.equals(profile, user.profile);
+                Objects.equals(profile, user.profile) &&
+                Objects.equals(dateSignIn, user.dateSignIn);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idUser, surname, name, phone, email, password, profile);
+        return Objects.hash(idUser, surname, name, phone, email, password, profile, dateSignIn);
     }
 
-    public void formatToUpdate(User userPost){
-        if(userPost!=null){
+    @OneToMany(mappedBy = "userByEmetteur")
+    public Collection<Discussion> getDiscussionsByIdUser() {
+        return discussionsByIdUser;
+    }
 
+    public void setDiscussionsByIdUser(Collection<Discussion> discussionsByIdUser) {
+        this.discussionsByIdUser = discussionsByIdUser;
+    }
+
+    @OneToMany(mappedBy = "userByRecepteur")
+    public Collection<Discussion> getDiscussionsByIdUser_0() {
+        return discussionsByIdUser_0;
+    }
+
+    public void setDiscussionsByIdUser_0(Collection<Discussion> discussionsByIdUser_0) {
+        this.discussionsByIdUser_0 = discussionsByIdUser_0;
+    }
+
+    @OneToMany(mappedBy = "userByProprietaire")
+    public Collection<Phonebook> getPhonebooksByIdUser() {
+        return phonebooksByIdUser;
+    }
+
+    public void setPhonebooksByIdUser(Collection<Phonebook> phonebooksByIdUser) {
+        this.phonebooksByIdUser = phonebooksByIdUser;
+    }
+
+    public void formatToUpdate(User userPost) {
+        if(userPost!=null){
             if(userPost.getEmail()!=null) this.setEmail(userPost.getEmail());
             if(userPost.getIdUser()!=null) this.setIdUser(userPost.getIdUser());
             if(userPost.getName()!=null) this.setName(userPost.getName());
@@ -119,15 +155,5 @@ public class User {
             if(userPost.getPassword()!=null) this.setPassword(userPost.getPassword());
             if(userPost.getProfile()!=null) this.setProfile(userPost.getProfile());
         }
-    }
-
-    @Basic
-    @Column(name = "date_sign_in")
-    public Timestamp getDateSignIn() {
-        return dateSignIn;
-    }
-
-    public void setDateSignIn(Timestamp dateSignIn) {
-        this.dateSignIn = dateSignIn;
     }
 }

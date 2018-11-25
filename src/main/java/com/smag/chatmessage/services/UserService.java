@@ -1,10 +1,12 @@
 package com.smag.chatmessage.services;
 
+import com.smag.chatmessage.helper.GenerateCode;
 import com.smag.chatmessage.modele.User;
 import com.smag.chatmessage.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 import java.util.Set;
@@ -16,6 +18,7 @@ public class UserService {
     UserRepository userRepository;
     @Transactional
     public void save(User user) {
+        user.setIdUser(GenerateCode.clefUTC("USR"));
         userRepository.saveAndFlush(user);
     }
 
