@@ -1,17 +1,18 @@
 package com.smag.chatmessage.modele;
 
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.Objects;
 
 @Entity
 public class Discussion {
     private String idDiscussion;
     private Timestamp lastUpdate;
-    private User userByEmetteur;
-    private User userByRecepteur;
-    private Collection<Message> messagesByIdDiscussion;
+    private String transmetter;
+    private String receiver;
 
     @Id
     @Column(name = "id_discussion")
@@ -47,32 +48,23 @@ public class Discussion {
         return Objects.hash(idDiscussion, lastUpdate);
     }
 
-    @ManyToOne
-    @JoinColumn(name = "emetteur", referencedColumnName = "id_user", nullable = false)
-    public User getUserByEmetteur() {
-        return userByEmetteur;
+    @Basic
+    @Column(name = "transmetter")
+    public String getTransmetter() {
+        return transmetter;
     }
 
-    public void setUserByEmetteur(User userByEmetteur) {
-        this.userByEmetteur = userByEmetteur;
+    public void setTransmetter(String transmetter) {
+        this.transmetter = transmetter;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "recepteur", referencedColumnName = "id_user", nullable = false)
-    public User getUserByRecepteur() {
-        return userByRecepteur;
+    @Basic
+    @Column(name = "receiver")
+    public String getReceiver() {
+        return receiver;
     }
 
-    public void setUserByRecepteur(User userByRecepteur) {
-        this.userByRecepteur = userByRecepteur;
-    }
-
-    @OneToMany(mappedBy = "discussionByIdDiscussion")
-    public Collection<Message> getMessagesByIdDiscussion() {
-        return messagesByIdDiscussion;
-    }
-
-    public void setMessagesByIdDiscussion(Collection<Message> messagesByIdDiscussion) {
-        this.messagesByIdDiscussion = messagesByIdDiscussion;
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 }

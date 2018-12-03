@@ -11,6 +11,9 @@ import java.util.Random;
 import java.util.StringTokenizer;
 
 public class GenerateCode {
+    private GenerateCode() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static String clefUTC(String prefixe) {
         ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);

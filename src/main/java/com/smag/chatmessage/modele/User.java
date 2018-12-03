@@ -1,8 +1,10 @@
 package com.smag.chatmessage.modele;
 
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -15,9 +17,6 @@ public class User {
     private String password;
     private String profile;
     private Timestamp dateSignIn;
-    private Collection<Discussion> discussionsByIdUser;
-    private Collection<Discussion> discussionsByIdUser_0;
-    private Collection<Phonebook> phonebooksByIdUser;
 
     @Id
     @Column(name = "id_user")
@@ -119,33 +118,6 @@ public class User {
         return Objects.hash(idUser, surname, name, phone, email, password, profile, dateSignIn);
     }
 
-    @OneToMany(mappedBy = "userByEmetteur")
-    public Collection<Discussion> getDiscussionsByIdUser() {
-        return discussionsByIdUser;
-    }
-
-    public void setDiscussionsByIdUser(Collection<Discussion> discussionsByIdUser) {
-        this.discussionsByIdUser = discussionsByIdUser;
-    }
-
-    @OneToMany(mappedBy = "userByRecepteur")
-    public Collection<Discussion> getDiscussionsByIdUser_0() {
-        return discussionsByIdUser_0;
-    }
-
-    public void setDiscussionsByIdUser_0(Collection<Discussion> discussionsByIdUser_0) {
-        this.discussionsByIdUser_0 = discussionsByIdUser_0;
-    }
-
-    @OneToMany(mappedBy = "userByProprietaire")
-    public Collection<Phonebook> getPhonebooksByIdUser() {
-        return phonebooksByIdUser;
-    }
-
-    public void setPhonebooksByIdUser(Collection<Phonebook> phonebooksByIdUser) {
-        this.phonebooksByIdUser = phonebooksByIdUser;
-    }
-
     public void formatToUpdate(User userPost) {
         if(userPost!=null){
             if(userPost.getEmail()!=null) this.setEmail(userPost.getEmail());
@@ -155,5 +127,9 @@ public class User {
             if(userPost.getPassword()!=null) this.setPassword(userPost.getPassword());
             if(userPost.getProfile()!=null) this.setProfile(userPost.getProfile());
         }
+    }
+
+    public UserRest converToValidUserRest(){
+     return  new UserRest(this.idUser, this.surname, this.name, this.phone, this.email);
     }
 }

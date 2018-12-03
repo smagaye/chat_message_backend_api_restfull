@@ -3,6 +3,7 @@ package com.smag.chatmessage.repositories;
 import com.smag.chatmessage.modele.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -18,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     public User findByPhone(String phone);
 
-    public List<User> findByIdUserIn(Set<String> listIdUser);
+    public List<User> findByIdUserIn(List<String> listIdUser);
 
     public List<User> findBySurname(String surname);
 
@@ -28,14 +29,20 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     public User findBySurnameOrNameOrEmailOrPhoneOrProfile(String surname, String name, String email, String phone, String profile);
 
+
+    @Transactional
     public void deleteAll();
 
+    @Transactional
     public void deleteByIdUser(String id);
 
+    @Transactional
     public void deleteByEmail(String email);
 
+    @Transactional
     public void deleteByPhone(String phone);
 
+    @Transactional
     public User findByEmailOrPhone(String email, String phone);
 
 

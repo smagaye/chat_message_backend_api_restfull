@@ -1,25 +1,26 @@
 package com.smag.chatmessage.modele;
 
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Phonebook {
-    private Integer idPhonebook;
+    private Long idPhonebook;
     private String listPhonebook;
     private Timestamp lastUpdate;
-    private User userByProprietaire;
+    private String owner;
 
     @Id
     @Column(name = "id_phonebook")
-    public Integer getIdPhonebook() {
+    public Long getIdPhonebook() {
         return idPhonebook;
     }
 
-    public void setIdPhonebook(Integer idPhonebook) {
+    public void setIdPhonebook(Long idPhonebook) {
         this.idPhonebook = idPhonebook;
     }
 
@@ -58,19 +59,19 @@ public class Phonebook {
         return Objects.hash(idPhonebook, listPhonebook, lastUpdate);
     }
 
-    @ManyToOne
-    @JoinColumn(name = "proprietaire", referencedColumnName = "id_user", nullable = false)
-    public User getUserByProprietaire() {
-        return userByProprietaire;
+    @Basic
+    @Column(name = "owner")
+    public String getOwner() {
+        return owner;
     }
 
-    public void setUserByProprietaire(User userByProprietaire) {
-        this.userByProprietaire = userByProprietaire;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
-    public Set<String> splitContactsId() {
+    public List<String> splitContactsId() {
         String[] arrayOfContact =this.listPhonebook.split("__");
-        Set<String> listContacts=new HashSet<>();
+        List<String> listContacts=new ArrayList<>();
         if (this.listPhonebook!=null)
 
             for (int i=0;i<arrayOfContact.length;i++)

@@ -3,10 +3,11 @@ package com.smag.chatmessage.services;
 import com.smag.chatmessage.helper.GenerateCode;
 import com.smag.chatmessage.modele.Phonebook;
 import com.smag.chatmessage.modele.User;
+import com.smag.chatmessage.modele.UserRest;
 import com.smag.chatmessage.repositories.PhonebookRepository;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +35,8 @@ public class PhonebookService {
                      newPhonebook.setListPhonebook(newPhonebook.getListPhonebook() + "__"+ contact.getIdUser());
                 }catch (NullPointerException ex){
                     newPhonebook = new Phonebook();
-                    newPhonebook.setIdPhonebook(GenerateCode.getRandomInteger());
-                    newPhonebook.setUserByProprietaire(proprietaire);
+                    newPhonebook.setIdPhonebook(new Long(GenerateCode.getRandomInteger()));
+                    newPhonebook.setOwner(proprietaire.getIdUser());
                     newPhonebook.setListPhonebook(contact.getIdUser());
                 }
                 save(newPhonebook);
@@ -43,7 +44,7 @@ public class PhonebookService {
     }
 
     public Phonebook findById(String id){
-        return  phonebookRepository.findByUserByProprietaire_IdUser(id);
+        return  phonebookRepository.findByOwner(id);
     }
 
     public void delete(int id){
@@ -51,14 +52,14 @@ public class PhonebookService {
     }
 
     public Phonebook getPhonebookByIdUser(String id){
-        return phonebookRepository.findByUserByProprietaire_IdUser(id);
+        return phonebookRepository.findByOwner(id);
     }
 
     public List<String> getOnlyPhonesNumber(String id){
-        List<User> contacts =getContacts(id);
+        List<UserRest> contacts =getContacts(id);
         if (contacts !=null) {
             List<String> phones = new ArrayList<>();
-            for (User user : contacts){
+            for (UserRest user : contacts){
                 phones.add(user.getPhone());
             }
             return phones;
@@ -67,10 +68,10 @@ public class PhonebookService {
     }
 
     public List<String> getOnlyEmails(String id){
-        List<User> contacts =getContacts(id);
+        List<UserRest> contacts =getContacts(id);
         if (contacts !=null) {
             List<String>  emails = new ArrayList<>();
-            for (User user : contacts){
+            for (UserRest user : contacts){
                emails.add(user.getEmail());
             }
             return emails;
@@ -78,7 +79,7 @@ public class PhonebookService {
         return null;
     }
 
-    public List<User> getContacts(String id) {
+    public List<UserRest> getContacts(String id) {
         Phonebook phonebook = getPhonebookByIdUser(id);
         if (phonebook !=null) {
             return userService.findAllContactById(phonebook.splitContactsId());
@@ -87,10 +88,10 @@ public class PhonebookService {
     }
 
     public List<String> getOnlySurnames(String id) {
-        List<User> contacts = getContacts(id);
+        List<UserRest> contacts = getContacts(id);
         if (contacts != null) {
             List<String> surnames = new ArrayList<>();
-            for (User user : contacts) {
+            for (UserRest user : contacts) {
                 if (user != null) surnames.add(user.getSurname());
             }
             return surnames;
@@ -99,14 +100,44 @@ public class PhonebookService {
     }
 
     public List<String> getOnlyNames(String id) {
-        List<User> contacts = getContacts(id);
+        List<UserRest> contacts = getContacts(id);
         if (contacts != null) {
             List<String> surnames = new ArrayList<>();
-            for (User user : contacts) {
+            for (UserRest user : contacts) {
                 if (user != null) surnames.add(user.getName());
             }
             return surnames;
         }
         return null;
+    }
+
+    public boolean deleteContactFromPhonebook(String idUser, String value){
+        Phonebook phonebook = findById(idUser);
+        if(phonebook!=null)
+        try {
+            List<String> contacts = phonebook.splitContactsId();
+            String idContact =userService.findByEmailOrPhone(value,value).getIdUser();
+            System.out.println(contacts);
+            contacts.remove(idContact);
+            System.out.println(contacts);
+            String listContacts="";
+            for(int i = 0;i<contacts.size()-1;i++){
+                listContacts+=contacts.get(i);
+                listContacts+="__";
+            }
+            System.out.println(listContacts);
+            listContacts+=(contacts.get(contacts.size()-1));
+            if(!listContacts.equals(""))
+                phonebook.setListPhonebook(listContacts);
+            save(phonebook);
+            return true;
+        }catch (NullPointerException ex){
+            ex.printStackTrace();
+        }catch (IndexOutOfBoundsException ex){
+            ex.printStackTrace();
+        }catch (HibernateException ex){
+            ex.printStackTrace();
+        }
+        return false;
     }
 }

@@ -6,22 +6,24 @@ import java.util.Objects;
 
 @Entity
 public class Message {
-    private Integer idMessage;
+    private Long idMessage;
     private String content;
     private String media;
-    private Timestamp sent;
-    private Timestamp received;
-    private Byte read;
-    private String status;
-    private Discussion discussionByIdDiscussion;
+    private String idDiscussion;
+    private String creator;
+    private Timestamp timeSent;
+    private Timestamp timeReceived;
+    private Integer readStatus;
+    private Integer deleteStatus;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id_message")
-    public Integer getIdMessage() {
+    public Long getIdMessage() {
         return idMessage;
     }
 
-    public void setIdMessage(Integer idMessage) {
+    public void setIdMessage(Long idMessage) {
         this.idMessage = idMessage;
     }
 
@@ -46,71 +48,77 @@ public class Message {
     }
 
     @Basic
-    @Column(name = "sent")
-    public Timestamp getSent() {
-        return sent;
+    @Column(name = "id_discussion")
+    public String getIdDiscussion() {
+        return idDiscussion;
     }
 
-    public void setSent(Timestamp sent) {
-        this.sent = sent;
-    }
-
-    @Basic
-    @Column(name = "received")
-    public Timestamp getReceived() {
-        return received;
-    }
-
-    public void setReceived(Timestamp received) {
-        this.received = received;
+    public void setIdDiscussion(String idDiscussion) {
+        this.idDiscussion = idDiscussion;
     }
 
     @Basic
-    @Column(name = "read")
-    public Byte getRead() {
-        return read;
+    @Column(name = "creator")
+    public String getCreator() {
+        return creator;
     }
 
-    public void setRead(Byte read) {
-        this.read = read;
-    }
-
-    @Basic
-    @Column(name = "status")
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Message message = (Message) o;
-        return Objects.equals(idMessage, message.idMessage) &&
-                Objects.equals(content, message.content) &&
-                Objects.equals(media, message.media) &&
-                Objects.equals(sent, message.sent) &&
-                Objects.equals(received, message.received) &&
-                Objects.equals(read, message.read) &&
-                Objects.equals(status, message.status);
+    public String toString() {
+        return "Message{" +
+                "idMessage=" + idMessage +
+                ", content='" + content + '\'' +
+                ", media='" + media + '\'' +
+                ", idDiscussion='" + idDiscussion + '\'' +
+                ", creator='" + creator + '\'' +
+                ", timeSent=" + timeSent +
+                ", timeReceived=" + timeReceived +
+                ", readStatus=" + readStatus +
+                ", deleteStatus=" + deleteStatus +
+                '}';
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(idMessage, content, media, sent, received, read, status);
+    @Basic
+    @Column(name = "time_sent")
+    public Timestamp getTimeSent() {
+        return timeSent;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "id_discussion", referencedColumnName = "id_discussion", nullable = false)
-    public Discussion getDiscussionByIdDiscussion() {
-        return discussionByIdDiscussion;
+    public void setTimeSent(Timestamp timeSent) {
+        this.timeSent = timeSent;
     }
 
-    public void setDiscussionByIdDiscussion(Discussion discussionByIdDiscussion) {
-        this.discussionByIdDiscussion = discussionByIdDiscussion;
+    @Basic
+    @Column(name = "time_received")
+    public Timestamp getTimeReceived() {
+        return timeReceived;
+    }
+
+    public void setTimeReceived(Timestamp timeReceived) {
+        this.timeReceived = timeReceived;
+    }
+
+    @Basic
+    @Column(name = "read_status")
+    public Integer getReadStatus() {
+        return readStatus;
+    }
+
+    public void setReadStatus(Integer readStatus) {
+        this.readStatus = readStatus;
+    }
+
+    @Basic
+    @Column(name = "delete_status")
+    public Integer getDeleteStatus() {
+        return deleteStatus;
+    }
+
+    public void setDeleteStatus(Integer deleteStatus) {
+        this.deleteStatus = deleteStatus;
     }
 }

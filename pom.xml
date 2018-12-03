@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.smag</groupId>
-	<artifactId>chatmessage</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>chatmessage-api</artifactId>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
-	<name>chatmessage</name>
-	<description>Demo project for Spring Boot</description>
+	<name>chatmessage-api</name>
+	<description>API RESTFULL Chat Message</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -57,12 +57,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.springframework.data/spring-data-rest-repository -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-data-rest-repository</artifactId>
-		</dependency>
-
 	</dependencies>
 	<build>
 		<plugins>

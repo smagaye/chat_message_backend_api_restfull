@@ -1,24 +1,24 @@
-package com.smag.chatmessage.controller;
+package com.smag.chatmessage.api;
 
 import com.smag.chatmessage.modele.User;
+import com.smag.chatmessage.modele.UserRest;
 import com.smag.chatmessage.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
 @RepositoryRestController
 @RestController
-public class APIadmin {
+public class AdminAPI {
     @Autowired
     UserService userService;
-    @PostMapping(value="/addUsers")
-    private ResponseEntity<?> addUsers(@Valid @RequestBody List<User> users) {
+    @PostMapping(value="/admin/addUsers")
+    private ResponseEntity addUsers(@Valid @RequestBody List<User> users) {
         List<User> errorUser =new ArrayList<>();
         if(users!=null)
             for(User user : users){
@@ -33,13 +33,13 @@ public class APIadmin {
                     errorUser.add(user);
                 }
             }
-        if(errorUser.isEmpty()) return new ResponseEntity<>(errorUser, HttpStatus.OK);
+        if(errorUser.isEmpty()) return new ResponseEntity(errorUser, HttpStatus.OK);
 
         else return new ResponseEntity(errorUser,HttpStatus.CONFLICT);
     }
 
-    @PostMapping(path="/addUser")
-    private ResponseEntity<?> addUser(@RequestBody User user) {
+    @PostMapping(path="/admin/addUser")
+    private ResponseEntity addUser(@RequestBody User user) {
         User userFound = userService.findByEmailOrPhone(user.getEmail(),user.getPhone());
         if(userFound==null){
             userService.save(user);
@@ -50,8 +50,8 @@ public class APIadmin {
 
     }
 
-    @GetMapping(value="/users")
-    private @ResponseBody ResponseEntity<Object> findUserByParameters (
+    @GetMapping(value="/admin/users")
+    private @ResponseBody ResponseEntity findUserByParameters (
             @RequestParam(required=false) String surname,
             @RequestParam(required=false) String name,
             @RequestParam(required=false) String email,
@@ -59,50 +59,44 @@ public class APIadmin {
             @RequestParam(required=false) String profile){
 
         if(email!=null){
-            User user =userService.findByEmail(email);
+            UserRest user =userService.findByEmail(email);
             if (user != null) {
-                return  new ResponseEntity(user, HttpStatus.OK);
+                return  new ResponseEntity<>(user, HttpStatus.OK);
             }
-                return new ResponseEntity(user, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(user, HttpStatus.NOT_FOUND);
         }else if(name!=null){
-            List<User> users =userService.findByName(name);
+            List<UserRest> users =userService.findByName(name);
             if (users != null) {
-                return  new ResponseEntity(users, HttpStatus.OK);
+                return  new ResponseEntity<>(users, HttpStatus.OK);
             }
-                return new ResponseEntity(users, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(users, HttpStatus.NOT_FOUND);
 
         }else if(surname!=null){
-            List<User> users =userService.findBySurname(surname);
+            List<UserRest> users =userService.findBySurname(surname);
             if ((users != null)) {
-                return  new ResponseEntity(users, HttpStatus.OK);
+                return  new ResponseEntity<>(users, HttpStatus.OK);
             }
-                return new ResponseEntity(users, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(users, HttpStatus.NOT_FOUND);
         }else if(phone!=null){
-           User user =userService.findByPhone(phone);
+           UserRest user =userService.findByPhone(phone);
             if (user != null) {
-                return  new ResponseEntity(user, HttpStatus.OK);
+                return  new ResponseEntity<>(user, HttpStatus.OK);
             }
-                return new ResponseEntity(user, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(user, HttpStatus.NOT_FOUND);
 
         }else if(profile!=null){
-           User user =userService.findByProfile(profile);
+           UserRest user =userService.findByProfile(profile);
             if (user != null) {
-                return  new ResponseEntity(user, HttpStatus.OK);
+                return  new ResponseEntity<>(user, HttpStatus.OK);
             }
-                return new ResponseEntity(user, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(user, HttpStatus.NOT_FOUND);
         }
-            return new ResponseEntity(userService.getAllUsers(),HttpStatus.OK);
+            return new ResponseEntity<>(userService.getAllUsers(),HttpStatus.OK);
     }
 
-    @GetMapping(value="/users/{id}")
-    private User getUserById(@PathVariable("id")  String id){
-        return userService.findByIdUser(id);
-    }
-
-    @PutMapping(value="/updateUser")
-    private ResponseEntity<User> updateUser (@RequestBody User user) {
+    @PutMapping(value="/admin/updateUser")
+    private ResponseEntity updateUser (@RequestBody User user) {
         User userFound = userService.findByEmailOrPhone(user.getEmail(),user.getPhone());
-
         if(userFound!=null){
             userFound.formatToUpdate(user);
             userService.save(user);
@@ -112,12 +106,12 @@ public class APIadmin {
         }
     }
 
-    @DeleteMapping(value="/users")
+    @DeleteMapping(value="/admin/users")
     private void deleteAllUsers(){
         userService.deleteAllUsers();
     }
 
-    @DeleteMapping(value="/users/{id}")
+    @DeleteMapping(value="/admin/users/{id}")
     private String deleteUserById(@PathVariable("id")  String id){
          if(userService.findByIdUser(id)!=null)userService.deleteById(id);
         return "Deleted";
