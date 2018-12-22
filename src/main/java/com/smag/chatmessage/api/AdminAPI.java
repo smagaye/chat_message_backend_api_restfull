@@ -42,7 +42,11 @@ public class AdminAPI {
     private ResponseEntity addUser(@RequestBody User user) {
         User userFound = userService.findByEmailOrPhone(user.getEmail(),user.getPhone());
         if(userFound==null){
-            userService.save(user);
+            try{
+                userService.save(user);
+            }catch (Exception ex){
+                return new ResponseEntity<>(user, HttpStatus.BAD_REQUEST);
+            }
             return new ResponseEntity<>(user, HttpStatus.OK);
         }else{
             return new ResponseEntity<>(user, HttpStatus.CONFLICT);

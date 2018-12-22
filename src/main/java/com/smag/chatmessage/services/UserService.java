@@ -4,10 +4,14 @@ import com.smag.chatmessage.helper.GenerateCode;
 import com.smag.chatmessage.modele.User;
 import com.smag.chatmessage.modele.UserRest;
 import com.smag.chatmessage.repositories.UserRepository;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.query.JpaQueryExecution;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -17,10 +21,17 @@ import java.util.Set;
 public class UserService {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    private StorageService storageService;
+
     @Transactional
     public void save(User user) {
-        user.setIdUser(GenerateCode.clefUTC("USR"));
-        userRepository.saveAndFlush(user);
+        try{
+            user.setIdUser(GenerateCode.clefUTC("USR"));
+            userRepository.saveAndFlush(user);
+        }catch (Exception ex){
+           // System.out.println(ex.getMessage());
+        }
     }
 
     public List<UserRest> getAllUsers(){
@@ -88,5 +99,24 @@ public class UserService {
             }
         }
         return userRestList;
+    }
+
+    public String editProfile(String id, MultipartFile file) {
+        String message=null;
+        try {
+            User user = findByIdUser(id);
+
+            String profile = user.getProfile();
+
+            String newFilename = storageService.store(file);
+            user.setProfile(newFilename);
+            userRepository.save(user);
+            if(!profile.equals("default.jpg")){
+                storageService.deleteFile(profile);
+            }
+            return "Success!";
+        }catch (Exception ex){
+            return "failed!";
+        }
     }
 }
