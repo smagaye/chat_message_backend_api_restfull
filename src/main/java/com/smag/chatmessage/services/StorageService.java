@@ -50,6 +50,15 @@ public class StorageService {
         }
     }
 
+    public boolean isImage(MultipartFile file){
+        boolean isImage=false;
+        if(file !=null){
+            String type = file.getContentType().split("/")[0];
+            isImage =(type.equals("image")?true:false);
+        }
+        return   isImage;
+    }
+
     public Resource loadFileAsResource(String filename) {
         try {
             Path filePath = Paths.get(rootLocation.toAbsolutePath().toString().concat(File.separator).concat(filename));

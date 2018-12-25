@@ -104,6 +104,8 @@ public class UserService {
     public String editProfile(String id, MultipartFile file) {
         String message=null;
         try {
+            if(!storageService.isImage(file))
+                return "Format incompatible!";
             User user = findByIdUser(id);
 
             String profile = user.getProfile();
