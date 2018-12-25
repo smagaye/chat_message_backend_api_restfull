@@ -18,6 +18,10 @@ public class User {
     private String profile;
     private Timestamp dateSignIn;
 
+    public User() {
+        this.profile="default.jpg";
+    }
+
     @Id
     @Column(name = "id_user")
     public String getIdUser() {
@@ -130,6 +134,6 @@ public class User {
     }
 
     public UserRest converToValidUserRest(){
-     return  new UserRest(this.idUser, this.surname, this.name, this.phone, this.email);
+     return  new UserRest(this.idUser, this.surname, this.name, this.phone, this.email,this.profile);
     }
 }
